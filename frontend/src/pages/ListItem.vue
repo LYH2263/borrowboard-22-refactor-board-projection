@@ -7,14 +7,16 @@
   </div>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { api } from '../api'
 const router = useRouter()
+const reload = inject('reloadBoard')
 const title = ref('')
 const owner = ref('')
 async function go() {
   await api('/items', { method: 'POST', body: JSON.stringify({ title: title.value, owner: owner.value }) })
+  await reload()
   router.push('/')
 }
 </script>

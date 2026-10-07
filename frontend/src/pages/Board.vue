@@ -12,7 +12,7 @@
     </section>
     <section class="pane">
       <h2>在借 / 逾期</h2>
-      <div v-for="l in [...board.overdue, ...board.active]" :key="l.id" class="item" :class="{ overdue: l.overdue }">
+      <div v-for="l in board.on_loan" :key="l.id" class="item" :class="{ overdue: l.overdue }">
         <strong>{{ l.title }}</strong> → {{ l.borrower }}
         <div class="muted">应还 {{ l.due_date }} {{ l.overdue ? '· 逾期' : '' }}</div>
         <button @click="ret(l.id)">归还</button>
