@@ -1,4 +1,5 @@
 from app.db import connect
+from app.projections import board as board_proj
 
 def init_db():
     c = connect()
@@ -12,6 +13,7 @@ def init_db():
     );
     CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY, value TEXT);
     """)
+    board_proj.ensure_tables(c)
     if c.execute("SELECT COUNT(*) c FROM items").fetchone()["c"] == 0:
         c.executemany("INSERT INTO items(title,owner,status,data_quality) VALUES (?,?,?,?)", [
             ("电钻", "老周", "available", "clean"),
@@ -24,5 +26,7 @@ def init_db():
             (4, "邻居甲", "active", "2020-06-01", "2020-05-01"),
         )
         c.execute("INSERT INTO settings(key,value) VALUES ('board_name','木色邻里板')")
-        c.commit()
+    # 启动时从真源全量重建一次投影：投影不持有独立事实，可随时重建。
+    board_proj.refresh(c)
+    c.commit()
     c.close()
